@@ -151,4 +151,26 @@ class SerieslyClient
 
         return $response->getStatusCode() === 200;
     }
+
+    /**
+     * @param string $databaseName
+     * @param array $data
+     * @param int | null $timestamp
+     * @return bool
+     * @throws DatabaseException
+     */
+    public function pushData($databaseName, array $data, $timestamp = null)
+    {
+        $timestampQuery = '';
+
+        if ($timestamp !== null) {
+            $timestampQuery = '?' . http_build_query(['ts' => $timestamp]);
+        }
+
+        $request = new Request('POST', $this->getUrl($databaseName . $timestampQuery), [], json_encode($data));
+
+        $response = $this->execute($request);
+
+        return $response->getStatusCode() === 201;
+    }
 }
